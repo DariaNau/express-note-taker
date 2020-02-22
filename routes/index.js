@@ -2,13 +2,14 @@ const router = require('express').Router()
 const htmlRoutes = require('./htmlRoutes')
 const apiRoutes = require('./apiRoutes')
 
+
+// Sets up the Express app to handle data parsing
 router.use('/api', apiRoutes)
 router.use(htmlRoutes)
 
 module.exports = router
 
-
-
+// so basically does this:
 
 // function handleHTTP(req, res) {
 //     // req.url = '/api/notes'
