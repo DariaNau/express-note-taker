@@ -16,6 +16,7 @@ app.use(express.json());
 // GET /notes - Should return the notes.html file.
 // GET * - Should return the index.html file
 app.use(express.static('public'));
+
 // the code above does same as the code below:
 // app.get("/notes", function (req, res) {
     //     res.sendFile(path.join(__dirname, "./public/notes.html"));

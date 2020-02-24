@@ -5,6 +5,17 @@ let filePath = require('../../db/db.json');
 // console.log('filePath:', filePath)
 // console.log('__dirname:', __dirname)
 
+// GET /api/notes - Should read the db.json file and return all saved notes as JSON.
+
+router.get('/', function (req, res) {
+  fs.readFile(path.join(__dirname, "../../db/db.json"), 'utf8', function (err, db) {
+    if (err) throw err;
+    db = JSON.parse(db)
+    console.log(db)
+    res.json(db)
+  })
+});
+
 // POST /api/notes - Should recieve a new note to save on the request body, add it to the db.json file, and then return the new note to the client.
 
 router.post('/', function (req, res) {
@@ -24,17 +35,6 @@ router.post('/', function (req, res) {
       }
     }
   )
-});
-
-// GET /api/notes - Should read the db.json file and return all saved notes as JSON.
-
-router.get('/', function (req, res) {
-  fs.readFile(path.join(__dirname, "../../db/db.json"), 'utf8', function (err, db) {
-    if (err) throw err;
-    db = JSON.parse(db)
-    console.log(db)
-    res.json(db)
-  })
 });
 
 // DELETE /api/notes/:id - Should recieve a query paramter containing the id of a note to delete. 
