@@ -37,7 +37,7 @@ router.post('/', function (req, res) {
     // db[3] === 'dragon'
     // db.length -1 === 3
     // db[db.length -1] === 'dragon'
-    newNote.id = db[db.length - 1].id + 1 || 1;
+    newNote.id = db.length > 0 ? db[db.length - 1].id + 1 : 1;
 
     db.push(newNote)
 
