@@ -1,17 +1,17 @@
 const router = require('express').Router();
 const path = require('path');
 const fs = require('fs');
-let filePath = require('../../db/db.json');
-// console.log('filePath:', filePath)
+let filePath = path.join(__dirname, "../../db/db.json")
+console.log('filePath:', filePath)
 // console.log('__dirname:', __dirname)
 
+// var db = require('../../db/db.json')
 // GET /api/notes - Should read the db.json file and return all saved notes as JSON.
 
 router.get('/', function (req, res) {
-  fs.readFile(path.join(__dirname, "../../db/db.json"), 'utf8', function (err, db) {
+  fs.readFile(filePath, 'utf8', function (err, db) {
     if (err) throw err;
     db = JSON.parse(db)
-    console.log(db)
     res.json(db)
   })
 });
@@ -22,19 +22,34 @@ router.post('/', function (req, res) {
   // req.body hosts is equal to the JSON post sent from the user
   const newNote = req.body;
   // This works because of our body parsing middleware
-  // console.log(newNote)
-  filePath.push(newNote)
-  // console.log(filePath)
-  fs.writeFile(path.join(__dirname, "../../db/db.json"),
-    JSON.stringify(filePath),
-    err => {
-      if (err) {
-        res.json(err);
-      } else {
-        res.json(filePath);
-      }
-    }
-  )
+  console.log(newNote)
+  fs.readFile(filePath, 'utf8', function (err, db) {
+    if (err) throw err;
+    db = JSON.parse(db)
+
+    // ['dog', 'cat', 'iguana']
+    // length: 3
+    // db[2] === 'iguana
+    // db.length - 1 === 2
+    // db[db.length - 1] === 'iguana'
+    // db.push('dragon')
+    // length: 4
+    // db[3] === 'dragon'
+    // db.length -1 === 3
+    // db[db.length -1] === 'dragon'
+    newNote.id = db[db.length - 1].id + 1
+
+    db.push(newNote)
+
+    fs.writeFile(filePath, JSON.stringify(db),
+      err => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(db);
+        }
+      })
+  })
 });
 
 // DELETE /api/notes/:id - Should recieve a query paramter containing the id of a note to delete. 
@@ -43,22 +58,22 @@ router.post('/', function (req, res) {
 // remove the note with the given id property, and then rewrite the notes to the db.json file.
 
 router.delete('/:id', function (req, res) {
-  console.log(req.body);
-	console.log(filePath);
-	filePath = filePath.filter(element => {
-		return element.id != req.body.id;
-	});
-  console.log(filePath);
-  fs.writeFile(path.join(__dirname, "../../db/db.json"),
-  JSON.stringify(filePath),
-  err => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(filePath);
-    }
-  }
-)
-})
+  fs.readFile(filePath, 'utf8', function (err, db) {
+    if (err) throw err;
+    db = JSON.parse(db)
+
+    db = db.filter(post => post.id !== parseInt(req.params.id))
+  
+    fs.writeFile(filePath, JSON.stringify(db),
+      err => {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(db);
+        }
+      })
+  })
+
+});
 
 module.exports = router
